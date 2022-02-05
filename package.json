@@ -1,0 +1,28 @@
+{
+  "name": "skole-pln",
+  "version": "1.0.0",
+  "repository": "git@github.com:theS1LV3R/skole-pln.git",
+  "author": "S1LV3R <s1lv3r@corax.team>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{js,vue}": "eslint",
+    "*.{css,vue}": "stylelint"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@commitlint/cli": "^16.1.0",
+    "@commitlint/config-conventional": "^16.0.0",
+    "husky": "^7.0.0",
+    "lint-staged": "^12.3.3",
+    "stylelint": "^14.3.0",
+    "stylelint-config-prettier": "^9.0.3",
+    "stylelint-config-recommended-scss": "^5.0.2",
+    "stylelint-config-recommended-vue": "^1.1.0",
+    "stylelint-config-standard": "^24.0.0",
+    "vls": "^0.7.6"
+  }
+}

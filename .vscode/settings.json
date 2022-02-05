@@ -1,0 +1,27 @@
+{
+  "eslint.workingDirectories": [
+      "backend",
+      "frontend"
+    ],
+    "sqltools.connections": [
+      {
+        "previewLimit": 50,
+        "server": "localhost",
+        "port": 5432,
+        "driver": "PostgreSQL",
+        "name": "PLN",
+        "database": "pln",
+        "username": "postgres",
+        "password": "postgres"
+      }
+    ],
+    "files.exclude": {
+      "**/.git": false,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "**/node_modules": true
+    }
+}
