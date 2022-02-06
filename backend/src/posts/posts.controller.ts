@@ -6,8 +6,8 @@ import {
   Patch,
   Param,
   Delete,
-  Request,
   Query,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -18,7 +18,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Request as RequestType } from 'express';
+import { Request } from 'express';
 
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -44,7 +44,7 @@ export class PostsController {
   @Post()
   @ApiCreatedResponse({ type: () => PostEntity })
   @Roles(Role.Admin)
-  create(@Body() createPostDto: CreatePostDto, @Request() req: RequestType) {
+  create(@Body() createPostDto: CreatePostDto, @Req() req: Request) {
     return this.postsService.create(createPostDto, req.user);
   }
 
@@ -70,7 +70,7 @@ export class PostsController {
 
   @Delete(':id')
   @ApiOkResponse({ description: 'Successfully deleted post' })
-  remove(@Param('id') id: string, @Request() req: RequestType) {
+  remove(@Param('id') id: string, @Req() req: Request) {
     return this.postsService.remove(+id, req.user);
   }
 }

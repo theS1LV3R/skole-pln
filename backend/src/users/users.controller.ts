@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Request } from '@nestjs/common';
+import { Controller, Delete, Get, Req } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
@@ -6,7 +6,7 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Request as RequestType } from 'express';
+import { Request } from 'express';
 import { DeleteUserResponseDto } from './dto/delete-user-response.dto';
 
 import { UserEntity } from './entities/user.entity';
@@ -25,19 +25,19 @@ export class UsersController {
     type: UserEntity,
     description: 'Returns currently logged in user object',
   })
-  async me(@Request() req: RequestType) {
+  async me(@Req() req: Request) {
     return this.usersService.findOne(req.user.id);
   }
 
   @Delete('me')
   @ApiOkResponse({ description: 'User deleted', type: DeleteUserResponseDto })
-  async delete(@Request() req: RequestType) {
+  async delete(@Req() req: Request) {
     return this.usersService.delete(req.user);
   }
 
   @Get(':id')
   @ApiOkResponse({ type: UserEntity })
-  async findById(@Request() req: RequestType) {
+  async findById(@Req() req: Request) {
     return this.usersService.findOne(+req.params.id);
   }
 }
