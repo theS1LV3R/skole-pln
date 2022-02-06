@@ -10,6 +10,7 @@ import { instanceToInstance } from 'class-transformer';
 import { CreateUserDto } from '@/auth/dto/create-user.dto';
 import { UserEntity } from '@/users/entities/user.entity';
 import { Password } from '@/common/password.class';
+import { DeleteUserResponseDto } from './dto/delete-user-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -47,9 +48,13 @@ export class UsersService {
     return this.userRepository.save(newUser);
   }
 
-  async delete(user: UserEntity) {
+  async delete(user: UserEntity): Promise<DeleteUserResponseDto> {
     user.scheduledForDeletion = true;
     this.userRepository.update(user, user);
+
+    return {
+      message: 'User scheduled for deletion',
+    };
   }
 
   private async notFoundHandler(user?: UserEntity): Promise<UserEntity> {

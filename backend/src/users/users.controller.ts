@@ -7,6 +7,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request as RequestType } from 'express';
+import { DeleteUserResponseDto } from './dto/delete-user-response.dto';
 
 import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -29,7 +30,7 @@ export class UsersController {
   }
 
   @Delete('me')
-  @ApiOkResponse({ description: 'User deleted' })
+  @ApiOkResponse({ description: 'User deleted', type: DeleteUserResponseDto })
   async delete(@Request() req: RequestType) {
     return this.usersService.delete(req.user);
   }
