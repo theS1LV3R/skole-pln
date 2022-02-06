@@ -5,10 +5,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { UserEntity } from '@/users/entities/user.entity';
+import { Exclude } from 'class-transformer';
+import { CommentEntity } from '@/comments/entities/comment.entity';
 
 @Entity({ name: 'tbl_post' })
 export class PostEntity {
@@ -40,4 +43,12 @@ export class PostEntity {
   @ManyToOne(() => UserEntity, { eager: true, nullable: false })
   @JoinColumn()
   user: UserEntity;
+
+  @ApiProperty({ type: () => CommentEntity })
+  @OneToMany(() => CommentEntity, (comment) => comment.post, {
+    eager: true,
+    nullable: false,
+  })
+  @JoinColumn()
+  comments: CommentEntity[];
 }

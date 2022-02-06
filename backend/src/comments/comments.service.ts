@@ -4,23 +4,20 @@ import { Repository } from 'typeorm';
 
 import { UserEntity } from '@/users/entities/user.entity';
 import { CommentEntity } from './entities/comment.entity';
-import { PostsService } from '@/posts/posts.service';
+import { PostEntity } from '@/posts/entities/post.entity';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectRepository(CommentEntity)
     private readonly commentRepository: Repository<CommentEntity>,
-    private readonly postService: PostsService,
   ) {}
 
   async create(
     content: PropType<CommentEntity, 'content'>,
     user: UserEntity,
-    postId: number,
+    post: PostEntity,
   ) {
-    const post = await this.postService.findOne(postId);
-
     if (!post) throw new NotFoundException('Post not found');
 
     const comment = new CommentEntity({
@@ -32,15 +29,18 @@ export class CommentsService {
     return this.commentRepository.save(comment);
   }
 
-  findAll() {
-    return `This action returns all comments`;
+  async findAllByPost(post: PostEntity) {
+    return this.commentRepository.find({
+      where: { post },
+      relations: ['user', 'post'],
+    });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} comment`;
+    return this.commentRepository.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+  remove(commentId: number, user: UserEntity) {
+    return this.commentRepository.delete({ id: commentId, user });
   }
 }
