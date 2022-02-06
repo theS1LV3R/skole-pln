@@ -1,7 +1,9 @@
+const { resolve } = require('path');
+
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: 'tsconfig.eslint.json',
+    project: resolve(__dirname, 'tsconfig.eslint.json'),
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint/eslint-plugin'],
