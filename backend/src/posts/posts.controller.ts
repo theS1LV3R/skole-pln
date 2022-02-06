@@ -26,7 +26,9 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { PostEntity } from './entities/post.entity';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Role } from '@/common/role.enum';
+import { Disabled } from '@/common/decorators/disabled.decorator';
 
+@Disabled()
 @ApiTags('posts')
 @ApiBearerAuth()
 @ApiForbiddenResponse({
