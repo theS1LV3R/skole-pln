@@ -190,13 +190,19 @@ const config: NuxtConfig = {
 
   publicRuntimeConfig: {
     axios: {
-      browserBaseURL: process.env.BROWSER_BASE_URL,
+      browserBaseURL:
+        process.env.NODE_ENV === 'production'
+          ? process.env.BROWSER_BASE_URL
+          : undefined,
     },
   },
 
   privateRuntimeConfig: {
     axios: {
-      baseURL: process.env.BASE_URL,
+      baseURL:
+        process.env.NODE_ENV === 'production'
+          ? process.env.BASE_URL
+          : undefined,
     },
   },
 }
