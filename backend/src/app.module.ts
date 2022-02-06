@@ -27,6 +27,7 @@ import { RolesGuard } from '@/common/roles.guard';
 import { AppService } from './app.service';
 import { GlobalModule } from '@/common/global.module';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
+import { DisabledGuard } from './common/guards/disabled.guard';
 
 const configConfig: ConfigModuleOptions = {
   isGlobal: true,
@@ -76,6 +77,10 @@ const configConfig: ConfigModuleOptions = {
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: DisabledGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
