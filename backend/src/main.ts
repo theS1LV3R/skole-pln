@@ -35,7 +35,7 @@ async function bootstrap() {
 
   const COOKIE_SECRET = config.get('cookie_secret', { infer: true });
 
-  app.setGlobalPrefix('api', { exclude: ['docs', 'admin', 'events'] });
+  app.setGlobalPrefix('api', { exclude: ['admin', 'events'] });
   app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.use(helmet());

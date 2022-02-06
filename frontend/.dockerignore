@@ -1,0 +1,11 @@
+.editorconfig
+.eslintrc*
+.nvmrc
+.prettierrc
+README.md
+renovate.json
+yarn-error.log
+node_modules
+cert
+.nuxt
+dist

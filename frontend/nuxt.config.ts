@@ -71,7 +71,6 @@ const config: NuxtConfig = {
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
     '@nuxtjs/netlify-files',
-    '@nuxtjs/fontawesome',
     '@nuxtjs/robots',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
@@ -122,10 +121,6 @@ const config: NuxtConfig = {
     },
   },
 
-  fontawesome: {
-    component: 'Fa',
-    suffix: true,
-  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
 
@@ -191,6 +186,18 @@ const config: NuxtConfig = {
     position: 'bottom-right',
     duration: 3000,
     keepOnHover: true,
+  },
+
+  publicRuntimeConfig: {
+    axios: {
+      browserBaseURL: process.env.BROWSER_BASE_URL,
+    },
+  },
+
+  privateRuntimeConfig: {
+    axios: {
+      baseURL: process.env.BASE_URL,
+    },
   },
 }
 

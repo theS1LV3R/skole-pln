@@ -33,7 +33,10 @@ const configConfig: ConfigModuleOptions = {
   load: [configFactory],
   cache: true,
   expandVariables: true,
-  envFilePath: resolve(__dirname, '../.env'),
+  envFilePath:
+    process.env.NODE_ENV === 'production'
+      ? resolve(__dirname, '../.env')
+      : resolve(__dirname, '../.env.dev'),
   ignoreEnvFile: false,
   ignoreEnvVars: false,
   validationSchema: Joi.object({

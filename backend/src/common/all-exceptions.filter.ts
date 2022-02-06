@@ -20,7 +20,7 @@ export class AllExceptionsFilter implements ExceptionFilter<Error> {
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     const errorResponse = {
-      statusCode: status,
+      statusCode: code,
       timestamp: new Date().toLocaleDateString(),
       path: request.url,
       method: request.method,
