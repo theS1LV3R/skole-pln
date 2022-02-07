@@ -11,7 +11,6 @@
         <span v-else>
           <NuxtLink to="/">Home</NuxtLink>
           <NuxtLink to="/posts">Posts</NuxtLink>
-          <NuxtLink to="/tags">Tags</NuxtLink>
           <div class="inline cursor-pointer" @click="showUserMenu()">
             <img
               class="rounded-full inline max-h-10"
