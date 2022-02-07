@@ -23,5 +23,9 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["./src/**/*.ts", "./src/common/types/express.d.ts"]
+  "include": [
+    "./src/**/*.ts",
+    "./src/common/types/express.d.ts",
+    "./src/common/types/ws.d.ts"
+  ]
 }

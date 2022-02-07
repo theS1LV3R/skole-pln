@@ -21,13 +21,13 @@ import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 import { UsersModule } from '@/users/users.module';
 import { CommentsModule } from '@/comments/comments.module';
 import { PostsModule } from '@/posts/posts.module';
-// import { EventsModule } from '@/events/events.module';
 import { LoggerMiddleware } from '@/common/middleware/request-log.middleware';
 import { RolesGuard } from '@/common/roles.guard';
 import { AppService } from './app.service';
 import { GlobalModule } from '@/common/global.module';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
 import { DisabledGuard } from './common/guards/disabled.guard';
+// import { EventsModule } from './events/events.module';
 
 const configConfig: ConfigModuleOptions = {
   isGlobal: true,

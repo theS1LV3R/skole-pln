@@ -1,23 +1,45 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { Injectable } from '@nestjs/common';
+import { WebSocketServer, WsException } from '@nestjs/websockets';
+import { WebSocket, Server } from 'ws';
 
 @Injectable()
 export class EventsService {
-  private clients: Socket[] = [];
-  private logger: Logger = new Logger(EventsService.name);
+  private clients: Set<WebSocket> = new Set();
 
-  async addClient(client: Socket) {
-    this.clients.push(client);
-    this.logger.log(`Client connected: ${client.id}`);
-  }
+  private rooms: Map<string, WebSocket[]> = new Map();
 
-  async removeClient(client: Socket) {
-    this.clients = this.clients.filter((c) => c !== client);
-  }
+  @WebSocketServer()
+  private server: Server;
 
-  async emit(event: string, data: any) {
-    this.clients.forEach((client) => {
-      client.emit(event, data);
+  addClient(client: WebSocket) {
+    this.clients.add(client);
+
+    client.on('close', () => {
+      this.removeClient(client);
     });
+  }
+
+  removeClient(client: WebSocket) {
+    this.clients.delete(client);
+  }
+
+  joinRoom(room: string, client: WebSocket) {
+    if (!this.rooms.get(room)) {
+      this.rooms.set(room, [client]);
+      return;
+    }
+
+    this.rooms.set(room, [...this.rooms.get(room), client]);
+
+    return { status: 201, message: 'Joined room' };
+  }
+
+  leaveRoom(room: string, client: WebSocket) {
+    if (!this.rooms.get(room)) return;
+
+    this.rooms.set(
+      room,
+      this.rooms.get(room).filter((c) => c !== client),
+    );
   }
 }

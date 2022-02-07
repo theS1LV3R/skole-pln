@@ -1,118 +1,83 @@
-import { Logger } from '@nestjs/common';
 import {
   WebSocketGateway,
-  WebSocketServer,
-  OnGatewayInit,
+  SubscribeMessage,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
+  ConnectedSocket,
 } from '@nestjs/websockets';
-import { ParsedUrlQuery } from 'querystring';
-import { Namespace, Socket } from 'socket.io';
-import { instrument } from '@socket.io/admin-ui';
+import { WsAdapter } from '@nestjs/platform-ws';
+import { WebSocket, Server } from 'ws';
 
-@WebSocketGateway({
-  namespace: 'events',
-  transports: ['websocket'],
-})
+import { EventsService } from './events.service';
+import { CreateEventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
+import { Logger } from '@nestjs/common';
+import { from, map } from 'rxjs';
+import { JoinLeaveRoomDto } from './dto/join-leave-room.dto';
+import { IncomingMessage } from 'http';
+
+@WebSocketGateway(8080, { adapter: WsAdapter })
 export class EventsGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+  implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
-  @WebSocketServer()
-  server: Namespace;
-  private logger: Logger = new Logger(EventsGateway.name);
+  constructor(private readonly eventsService: EventsService) {}
 
-  /**
-   * After the Gateway has been initialised
-   * @param server
-   */
-  afterInit(server: Namespace) {
-    server.use(async (socket: Socket, next) => {
-      const query = socket.handshake.query;
+  private readonly logger: Logger = new Logger(EventsService.name);
 
-      if (this.isValid(query)) {
-        next();
-        return;
-      }
+  afterInit(server: Server) {
+    // console.log(server);
+    const a = server.address();
 
-      return next(new Error('401'));
-    });
-    this.logger.log(`${EventsGateway.name} initialised`);
+    if (typeof a === 'string') {
+      this.logger.log(`Initialized websocket gateway at ${a}`);
+    }
 
-    instrument(this.server.server, {
-      auth: false,
-    });
-
-    this.logger.log('Socket.io Admin UI initialised');
+    if (typeof a === 'object') {
+      this.logger.log(
+        `Initialized websocket gateway at ${a.address}:${a.port}`,
+      );
+    }
   }
 
-  /**
-   * Validate a connecting socket
-   * @param query
-   */
-  isValid(_query: ParsedUrlQuery): boolean {
-    // Perform validation logic here
-    return true;
+  handleConnection(client: WebSocket, req: IncomingMessage, ...args: any[]) {
+    this.eventsService.addClient(client);
+
+    const remoteAddress =
+      req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    this.logger.log(`Client connected: ${remoteAddress}`);
   }
 
-  /**
-   * Perform actions on connecting socket
-   * @param client
-   */
-  handleConnection(client: Socket) {
-    client.on('subscribe', (room: string, callback) =>
-      this.handleSubscribeEvent(client, room, callback),
-    );
-    client.on('unsubscribe', (room: string, callback) =>
-      this.handleUnsubscribeEvent(client, room, callback),
+  handleDisconnect(client: WebSocket) {
+    this.eventsService.removeClient(client);
+    // @ts-expect-error There is a property here but its not typed
+    this.logger.log(`Client disconnected: ${client._socket.remoteAddress}`);
+  }
+
+  @SubscribeMessage('events')
+  async onEvent(
+    @MessageBody() createEventDto: CreateEventDto,
+  ): Promise<CreateEventDto> {
+    return from([...Array(10).keys()]).pipe(
+      map((item) => ({ event: 'events', data: item })),
     );
   }
 
-  /**
-   * Perform actions on connecting socket
-   * @param client
-   */
-  handleDisconnect(_client: Socket) {
-    // Disconnect logic here
+  @SubscribeMessage('join_room')
+  async handleJoinRoom(
+    @MessageBody() joinRoomDto: JoinLeaveRoomDto,
+    @ConnectedSocket() client: WebSocket,
+  ) {
+    return this.eventsService.joinRoom(joinRoomDto.room, client);
   }
 
-  /**
-   * Handle Subscribe request from Socket
-   * @param client
-   * @param room
-   */
-  async handleSubscribeEvent(client: Socket, room: string, callback) {
-    // Validate if client can join room here
-
-    client.join(room);
-    callback(`subscribed: ${room}`);
-  }
-
-  /**
-   * Handle Unsubscribe request from Socket
-   * @param client
-   * @param room
-   */
-  async handleUnsubscribeEvent(client: Socket, room: string, callback) {
-    client.leave(room);
-    callback(`unsubscribed: ${room}`);
-  }
-
-  /**
-   * Publish Public Event
-   * @param event
-   * @param data
-   */
-  async publishEvent(event: string, data: any) {
-    this.server.emit(event, data);
-  }
-
-  /**
-   * Publish Event to Room
-   * @param room
-   * @param event
-   * @param data
-   */
-  async publishEventInRoom(room: string, event: string, data: any) {
-    this.server.to(room).emit(event, data);
+  @SubscribeMessage('leave_room')
+  async handleLeaveRoom(
+    @MessageBody() leaveRoomDto: JoinLeaveRoomDto,
+    @ConnectedSocket() client: WebSocket,
+  ) {
+    return this.eventsService.leaveRoom(leaveRoomDto.room, client);
   }
 }

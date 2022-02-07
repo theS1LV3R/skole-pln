@@ -7,6 +7,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+// import { WsAdapter } from '@nestjs/platform-ws';
 
 import { AppModule } from './app.module';
 import { configType } from './config';
@@ -43,6 +44,7 @@ async function bootstrap() {
   app.use(compression());
   app.set('trust proxy');
   app.use(cookieParser(COOKIE_SECRET));
+  // app.useWebSocketAdapter(new WsAdapter(app))
 
   const document = SwaggerModule.createDocument(app, swaggerConf);
   SwaggerModule.setup('docs', app, document);
