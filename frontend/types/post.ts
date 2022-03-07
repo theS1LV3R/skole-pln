@@ -5,10 +5,3 @@ export interface IContentDocument extends Record<string, any> {
   slug: string
   createdAt: Date
 }
-
-export interface Post extends IContentDocument {
-  title: string
-  date: string
-  tags?: Array<string>
-  image?: string
-}

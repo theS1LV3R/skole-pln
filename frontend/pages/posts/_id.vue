@@ -12,87 +12,67 @@
       </div>
     </div>
     <article
+      v-if="post"
       class="bg-nord-nord6 dark:bg-dark-container p-4 lg:max-w-screen-lg m-auto shadow-md"
     >
-      <img v-if="post.image" class="max-w-screen-sm m-auto" :src="post.image" />
       <h1 class="text-3xl">{{ post.title }}</h1>
       <div class="meta dark:text-dark-subtext my-2 font-light text-sm">
         <p>Published: {{ formatDate(post.createdAt.toString()) }}</p>
-        <p v-if="post.updated && post.updated !== post.createdAt">
-          Last updated: {{ formatDate(post.updated) }}
-        </p>
-        <p v-if="post.tags">
-          Tags:
-          <span v-for="tag in post.tags" :key="tag">
-            <NuxtLink class="hover:underline" :to="'/tags/' + tag">{{
-              tag
-            }}</NuxtLink
-            >{{
-              post.tags && tag === post.tags[post.tags.length - 1] ? '' : ', '
-            }}
-          </span>
+        <p v-if="post.updatedAt && post.updatedAt !== post.createdAt">
+          Last updated: {{ formatDate(post.updatedAt) }}
         </p>
       </div>
 
       <hr class="my-2" />
-      <nuxt-content :document="post" />
+      <p>{{ post.content }}</p>
     </article>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import Prism from 'prismjs'
-
-// #region PrismJS plugins
-import 'prismjs/components/prism-sql.min.js'
-
-import 'prismjs/plugins/toolbar/prism-toolbar.min.js'
-
-import 'prismjs/plugins/line-numbers/prism-line-numbers.min.js'
-import 'prismjs/plugins/line-numbers/prism-line-numbers.css'
-
-import 'prismjs/plugins/line-highlight/prism-line-highlight.min.js'
-import 'prismjs/plugins/line-highlight/prism-line-highlight.css'
 // #endregion
 
-import Octicon from '@/components/octicon.vue'
-import { Post } from '@/types/post'
+import { MetaInfo } from 'vue-meta'
+import VueRouter, { Route } from 'vue-router'
+import Octicon from '@/components/Octicon.vue'
+import { postModule } from '@/store'
+import type { Post } from '@/types'
+
+const fetchData = async ($route: Route, $router: VueRouter) => {
+  const { id } = $route.params
+
+  if (!id.match(/^\d+$/)) {
+    $router.push('/posts')
+  }
+
+  return await postModule.fetchOne(parseInt(id))
+}
 
 export default Vue.extend({
   components: { Octicon },
 
-  // async asyncData({ $content, params, error }) {
-  //   const post = await $content('posts', params.slug)
-  //     .fetch()
-  //     .catch(() => {
-  //       error({ statusCode: 404, message: 'Post not found' })
-  //     })
-
-  //   return { post }
-  // },
-
   data() {
     return {
-      post: {
-        title: '',
-        createdAt: '',
-        updated: '',
-        tags: [],
-        image: '',
-        content: '',
-      },
+      fetching: false,
+      post: {} as Post,
     }
   },
 
-  head() {
-    // @ts-ignore shush
-    return { title: (this.post as unknown as Post).title }
+  fetch({ route }) {
+    this.fetching = true
+    fetchData(route, this.$router)
+      .then((post) => {
+        this.post = post
+        this.fetching = false
+      })
+      .catch(() => {
+        this.fetching = false
+      })
   },
 
-  mounted() {
-    // eslint-disable-next-line import/no-named-as-default-member
-    Prism.highlightAll()
+  head(): MetaInfo {
+    return { title: this.post.title }
   },
 
   methods: {
@@ -105,6 +85,10 @@ export default Vue.extend({
         minute: 'numeric',
         hour12: false,
       })
+    },
+
+    fetch() {
+      this.$fetch ? this.$fetch() : fetchData(this.$route, this.$router)
     },
   },
 })

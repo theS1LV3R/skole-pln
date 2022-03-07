@@ -12,7 +12,9 @@
     "*.{js,ts,vue}": "eslint",
     "*.{css,vue}": "stylelint"
   },
-  "dependencies": {},
+  "dependencies": {
+    "vuex": "^4.0.2"
+  },
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",
     "@commitlint/config-conventional": "^16.0.0",

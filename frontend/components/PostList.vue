@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div v-if="posts instanceof Array">
     <span v-if="posts.length > 0">
       <Post
         v-for="post in posts"
-        :key="post.url"
+        :key="`post-${post.id}`"
         class="mb-4 shadow-md"
         :post="post"
       />
@@ -21,7 +21,7 @@
 <script lang="ts">
 import Vue from 'vue'
 
-import { Post as PostType } from '@/types/post'
+import { Post as PostType } from '@/types/index.d'
 import Post from '@/components/Post.vue'
 
 export default Vue.extend({
@@ -29,7 +29,7 @@ export default Vue.extend({
 
   props: {
     posts: {
-      type: Array as () => PostType[],
+      type: Array as () => PostType[] | Promise<PostType[]>,
       required: true,
     },
   },

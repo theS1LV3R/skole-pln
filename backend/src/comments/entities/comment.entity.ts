@@ -33,10 +33,12 @@ export class CommentEntity {
   @Exclude()
   @ManyToOne(() => UserEntity, { eager: false })
   @JoinColumn()
+  @ApiProperty()
   user: UserEntity;
 
   @Exclude()
   @ManyToOne(() => PostEntity, { eager: false })
   @JoinColumn()
+  @ApiProperty()
   post: PostEntity;
 }

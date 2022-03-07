@@ -22,6 +22,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "pretty": true,
+    "importHelpers": true,
 
     "baseUrl": ".",
     "paths": {
@@ -37,8 +38,11 @@
       "nuxt-build-optimisations",
       "@nuxtjs/axios",
       "@nuxtjs/auth-next",
-      "@nuxtjs/toast"
-    ]
+      "@nuxtjs/toast",
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
   },
   "exclude": ["node_modules", ".nuxt", "dist"]
 }

@@ -103,7 +103,9 @@ export default Vue.extend({
             this.$toast.success('User successfully registered')
             this.register = false
           })
-          .catch(() => this.$toast.error('An error occurred'))
+          .catch((err) => {
+            this.$toast.error(err.response.data.message)
+          })
       } else {
         await this.$auth
           .loginWith('local', {
@@ -117,7 +119,6 @@ export default Vue.extend({
             this.$router.push('/')
           })
           .catch((err) => {
-            console.log(JSON.parse(JSON.stringify({ ...err, _: err.stack })))
             if (err.message.includes('401')) {
               this.$toast.error('Unauthorized')
               return

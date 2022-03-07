@@ -11,14 +11,14 @@ const checkPerms: Middleware = ({ $auth, redirect }) => {
 
   if (!$auth.user?.roles) return redirect('/')
 
-  const user = $auth.user.roles as string | string[]
+  const roles = $auth.user.roles as string | string[]
 
-  if (!user.includes('admin') || user !== 'admin') {
+  if (!roles.includes('admin') || roles !== 'admin') {
     redirect('/')
   }
 }
 
 export default Vue.extend({
-  middleware: [checkPerms],
+  middleware: ['auth', checkPerms],
 })
 </script>
